@@ -8,34 +8,32 @@
 //  - [Chinese] http://www.cocos.com/docs/creator/scripting/life-cycle-callbacks.html
 //  - [English] http://www.cocos2d-x.org/docs/editors_and_tools/creator-chapters/scripting/life-cycle-callbacks/index.html
 
+var Temp = require("../common/Temp");
+
 cc.Class({
     extends: cc.Component,
 
     properties: {
-        // foo: {
-        //     // ATTRIBUTES:
-        //     default: null,        // The default value will be used only when the component attaching
-        //                           // to a node for the first time
-        //     type: cc.SpriteFrame, // optional, default is typeof default
-        //     serializable: true,   // optional, default is true
-        // },
-        // bar: {
-        //     get () {
-        //         return this._bar;
-        //     },
-        //     set (value) {
-        //         this._bar = value;
-        //     }
-        // },
     },
 
-    // LIFE-CYCLE CALLBACKS:
-
-    // onLoad () {},
+    // use this for initialization
+    onLoad () {
+        cc.log(cc.js.getClassName(this));
+        Temp.scene = this;
+    },
 
     start () {
-
-    },
-
-    // update (dt) {},
+        // 全局像素化
+        var sprites = cc.find("Canvas").getComponentsInChildren(cc.Sprite);
+        for(var i = 0;i < sprites.length;i++){
+            sprites[i].spriteFrame.getTexture().setAliasTexParameters();
+        }
+        var labels = cc.find("Canvas").getComponentsInChildren(cc.Label);
+        for(var i = 0;i < labels.length;i++){
+            cc.log(labels[i]);
+            if (labels[i].font instanceof cc.BitmapFont) {
+                labels[i].font.spriteFrame.getTexture().setAliasTexParameters();
+            }
+        }
+    }
 });
