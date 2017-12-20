@@ -23,6 +23,7 @@ cc.Class({
     },
 
     start () {
+        this.freezing = false;
         // 全局像素化
         var sprites = cc.find("Canvas").getComponentsInChildren(cc.Sprite);
         for(var i = 0;i < sprites.length;i++){
@@ -39,5 +40,17 @@ cc.Class({
                 // labels[i]._sgNode._renderCmd._texture.setAntiAliasTexParameters();
             }
         }
+    },
+
+    isFreeze () {
+        return this.freezing;
+    },
+
+    freeze () {
+        this.freezing = true;
+    },
+
+    unFreeze () {
+        this.freezing = false;
     }
 });

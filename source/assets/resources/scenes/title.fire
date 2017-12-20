@@ -114,7 +114,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "label",
+    "_name": "labelStart",
     "_objFlags": 0,
     "_parent": {
       "__id__": 2
@@ -128,12 +128,12 @@
       }
     ],
     "_prefab": null,
-    "_id": "8eSkNAdeFMRpqQrPe8JoYK",
+    "_id": "6bsb+tozdJ/oDQFs6zdYiE",
     "_opacity": 255,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
+      "r": 0,
+      "g": 51,
       "b": 255,
       "a": 255
     },
@@ -145,8 +145,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 31,
-      "height": 12
+      "width": 65.25,
+      "height": 4.5
     },
     "_rotationX": 0,
     "_rotationY": 0,
@@ -155,7 +155,7 @@
     "_position": {
       "__type__": "cc.Vec2",
       "x": 0,
-      "y": -32
+      "y": 19.3
     },
     "_skewX": 0,
     "_skewY": 0,
@@ -177,10 +177,12 @@
     "_fontSize": 12,
     "_lineHeight": 12,
     "_enableWrapText": true,
-    "_N$file": null,
-    "_isSystemFontUsed": true,
+    "_N$file": {
+      "__uuid__": "f4c0f6d7-6977-4253-aef0-43342463c613"
+    },
+    "_isSystemFontUsed": false,
     "_spacingX": 0,
-    "_N$string": "Label",
+    "_N$string": "Start Game",
     "_N$horizontalAlign": 1,
     "_N$verticalAlign": 1,
     "_N$fontFamily": "Arial",
@@ -188,7 +190,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "label",
+    "_name": "labelExit",
     "_objFlags": 0,
     "_parent": {
       "__id__": 2
@@ -202,12 +204,12 @@
       }
     ],
     "_prefab": null,
-    "_id": "6bsb+tozdJ/oDQFs6zdYiE",
+    "_id": "6epEgT0nNM3IeGn2SSovvq",
     "_opacity": 255,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
+      "r": 0,
+      "g": 51,
       "b": 255,
       "a": 255
     },
@@ -219,8 +221,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 39.6,
-      "height": 14.4
+      "width": 59.25,
+      "height": 4.5
     },
     "_rotationX": 0,
     "_rotationY": 0,
@@ -229,7 +231,7 @@
     "_position": {
       "__type__": "cc.Vec2",
       "x": 0,
-      "y": 0
+      "y": -15
     },
     "_skewX": 0,
     "_skewY": 0,
@@ -256,7 +258,7 @@
     },
     "_isSystemFontUsed": false,
     "_spacingX": 0,
-    "_N$string": "Label",
+    "_N$string": "Exit Game",
     "_N$horizontalAlign": 1,
     "_N$verticalAlign": 1,
     "_N$fontFamily": "Arial",
@@ -264,7 +266,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "New Sprite",
+    "_name": "bg",
     "_objFlags": 0,
     "_parent": {
       "__id__": 2
@@ -415,6 +417,13 @@
     "node": {
       "__id__": 10
     },
-    "_enabled": true
+    "_enabled": true,
+    "labelStart": {
+      "__id__": 4
+    },
+    "labelExit": {
+      "__id__": 6
+    },
+    "spriteSelect": null
   }
 ]
