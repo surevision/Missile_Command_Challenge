@@ -32,7 +32,11 @@ cc.Class({
         for(var i = 0;i < labels.length;i++){
             cc.log(labels[i]);
             if (labels[i].font instanceof cc.BitmapFont) {
+                // cc.log(1);
                 labels[i].font.spriteFrame.getTexture().setAliasTexParameters();
+            } else {
+                // cc.log(2);
+                // labels[i]._sgNode._renderCmd._texture.setAntiAliasTexParameters();
             }
         }
     }
