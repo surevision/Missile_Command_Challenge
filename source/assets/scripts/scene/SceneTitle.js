@@ -61,7 +61,7 @@ cc.Class({
         var self = this;
         this.freeze();
         this.labelStart.node.runAction(cc.sequence(
-            cc.scaleTo(0.1, 1.2, 1.2),
+            cc.blink(1, 5),
             cc.callFunc(function() {
                 self.gotoMainScene();
             })
@@ -72,10 +72,11 @@ cc.Class({
         if (this.isFreeze()) {
             return;
         }
+        console.log(arguments);
         var self = this;
         this.freeze();
         this.labelExit.node.runAction(cc.sequence(
-            cc.scaleTo(0.1, 1.2, 1.2),
+            cc.blink(0.5, 2),
             cc.callFunc(function() {
                 self.gotoExit();
             })
@@ -84,6 +85,7 @@ cc.Class({
 
     gotoMainScene () {
         cc.log("goto main scene");
+        cc.director.loadScene("main")
     },
 
     gotoExit () {
