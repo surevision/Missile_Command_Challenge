@@ -44,6 +44,7 @@ cc.Class({
     // LIFE-CYCLE CALLBACKS:
 
     onLoad () {
+        this._super();
         // 己方导弹精灵
         this.partyMissiles = {
             left:   [],
@@ -63,6 +64,7 @@ cc.Class({
     },
 
     start () {
+        this._super();
         this.phase = Phases.START;
 
         this.currWave = 0;  // 波数
@@ -102,18 +104,23 @@ cc.Class({
         this.flashNode.fill();
         this.flashNode.node.runAction(cc.repeatForever(cc.blink(0.1, 1))); // flash!
 
-        this.maskNode.type = 0;  // 触发refreshStencil
+        this.maskNode._refreshStencil();
+        // this.maskNode.type = 0;  // 触发refreshStencil
         var maskDrawNode = this.maskNode.getClippingStencil();
         maskDrawNode.clear();
 
-        var num = Math.floor(Math.random() * 5);
-        var node = this.maskNode.node;
-        for (var i = 0; i < num; i += 1) {
-            this.booms[i] = cc.v2(
-                Math.random() * node.width - node.width / 2,
-                Math.random() * node.height - node.height / 2
-            );
-        }
+        this.canvas.node.on(cc.Node.EventType.MOUSE_DOWN, function(evt) {
+            var node = this.maskNode.node;
+            this.booms[this.booms.length] = node.parent.convertToNodeSpace(evt.getLocation());
+        }, this);
+        // var num = Math.floor(Math.random() * 5);
+        // var node = this.maskNode.node;
+        // for (var i = 0; i < num; i += 1) {
+        //     this.booms[i] = cc.v2(
+        //         Math.random() * node.width - node.width / 2,
+        //         Math.random() * node.height - node.height / 2
+        //     );
+        // }
     },
 
     refreshUI () {

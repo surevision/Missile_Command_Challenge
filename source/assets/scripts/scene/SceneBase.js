@@ -17,13 +17,33 @@ cc.Class({
 
     properties: {
         frameCount: 0,
-        freezing: false
+        freezing: false,
+        canvas: {
+            type: cc.Canvas,
+            default: null
+        }
     },
 
     // use this for initialization
     onLoad () {
         cc.log(cc.js.getClassName(this));
         Temp.scene = this;
+        cc.director.getOpenGLView().setCursorVisible(false);
+        this.mouseCursor = null;
+        var self = this;
+        cc.loader.loadRes("prefabs/Cursor", cc.Prefab, function(err, prefab) {
+            var sprite = cc.instantiate(prefab);
+            self.canvas.node.parent.addChild(sprite);
+            sprite.z = 999;
+            self.mouseCursor = sprite;
+        });
+        this.canvas.node.on(cc.Node.EventType.MOUSE_MOVE, function(evt) {
+            var pos = evt.getLocation();//self.canvas.convertToWorldSpace(evt.getLocation());
+            if (self.mouseCursor != null) {
+                self.mouseCursor.x = pos.x;
+                self.mouseCursor.y = pos.y;
+            }
+        }, this);
     },
 
     start () {
@@ -45,7 +65,6 @@ cc.Class({
         //         // labels[i]._sgNode._renderCmd._texture.setAntiAliasTexParameters();
         //     }
         // }
-        cc.director.getOpenGLView().setCursorVisible(false);
     },
 
     update (dt) {
