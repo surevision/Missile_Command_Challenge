@@ -15,6 +15,14 @@ cc.Class({
         labelHighScore: {
             type: cc.Label,
             default: null
+        },
+        drawNode: {
+            type: cc.Graphics,
+            default: null
+        },
+        flashNode: {
+            type: cc.Graphics,
+            default: null
         }
         
     },
