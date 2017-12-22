@@ -1,3 +1,5 @@
+"use strict";
+
 const States = cc.Enum({
     FLY : "FLY",
     BOOM : "BOOM"

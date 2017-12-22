@@ -1,3 +1,5 @@
+"use strict";
+
 var Common = {
 	POST: "POST",
 	GET: "GET",

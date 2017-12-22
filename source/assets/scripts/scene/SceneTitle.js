@@ -1,3 +1,5 @@
+"use strict";
+
 var SceneBase = require("./SceneBase");
 
 cc.Class({

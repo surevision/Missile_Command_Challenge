@@ -1,3 +1,5 @@
+ "use strict";
+
 // Learn cc.Class:
 //  - [Chinese] http://www.cocos.com/docs/creator/scripting/class.html
 //  - [English] http://www.cocos2d-x.org/docs/editors_and_tools/creator-chapters/scripting/class/index.html
@@ -14,6 +16,8 @@ cc.Class({
     extends: cc.Component,
 
     properties: {
+        frameCount: 0,
+        freezing: false
     },
 
     // use this for initialization
@@ -23,23 +27,34 @@ cc.Class({
     },
 
     start () {
-        this.freezing = false;
         // 全局像素化
-        var sprites = cc.find("Canvas").getComponentsInChildren(cc.Sprite);
-        for(var i = 0;i < sprites.length;i++){
-            sprites[i].spriteFrame.getTexture().setAliasTexParameters();
-        }
-        var labels = cc.find("Canvas").getComponentsInChildren(cc.Label);
-        for(var i = 0;i < labels.length;i++){
-            cc.log(labels[i]);
-            if (labels[i].font instanceof cc.BitmapFont) {
-                // cc.log(1);
-                labels[i].font.spriteFrame.getTexture().setAliasTexParameters();
-            } else {
-                // cc.log(2);
-                // labels[i]._sgNode._renderCmd._texture.setAntiAliasTexParameters();
-            }
-        }
+        cc.view.enableAntiAlias(false);
+
+
+        // var sprites = cc.find("Canvas").getComponentsInChildren(cc.Sprite);
+        // for(var i = 0;i < sprites.length;i++){
+        //     // sprites[i].spriteFrame.getTexture().setAliasTexParameters();
+        // }
+        // var labels = cc.find("Canvas").getComponentsInChildren(cc.Label);
+        // for(var i = 0;i < labels.length;i++){
+        //     if (labels[i].font instanceof cc.BitmapFont) {
+        //         // cc.log(1);
+        //         // labels[i].font.spriteFrame.getTexture().setAliasTexParameters();
+        //     } else {
+        //         // cc.log(2);
+        //         // labels[i]._sgNode._renderCmd._texture.setAntiAliasTexParameters();
+        //     }
+        // }
+        cc.director.getOpenGLView().setCursorVisible(false);
+    },
+
+    update (dt) {
+        this.frameCount += 1;
+        this.onUpdate(dt);
+    },
+
+    onUpdate (dt) {
+        // cc.log(dt);
     },
 
     isFreeze () {
