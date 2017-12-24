@@ -13,6 +13,9 @@
     var cc_DrawNode = cc.DrawNode;
     /**
      * 绘制实心圆
+     * @param {*圆心} center 
+     * @param {*半径} r 
+     * @param {*颜色} color 
      */
     cc_DrawNode.prototype.drawSolidCircle = function(center, r, color) {
         // 利用cc.Mask类型为ellipse的算法

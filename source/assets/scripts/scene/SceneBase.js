@@ -28,22 +28,40 @@ cc.Class({
     onLoad () {
         cc.log(cc.js.getClassName(this));
         Temp.scene = this;
-        cc.director.getOpenGLView().setCursorVisible(false);
-        this.mouseCursor = null;
-        var self = this;
-        cc.loader.loadRes("prefabs/Cursor", cc.Prefab, function(err, prefab) {
-            var sprite = cc.instantiate(prefab);
-            self.canvas.node.parent.addChild(sprite);
-            sprite.z = 999;
-            self.mouseCursor = sprite;
-        });
-        this.canvas.node.on(cc.Node.EventType.MOUSE_MOVE, function(evt) {
-            var pos = evt.getLocation();//self.canvas.convertToWorldSpace(evt.getLocation());
-            if (self.mouseCursor != null) {
-                self.mouseCursor.x = pos.x;
-                self.mouseCursor.y = pos.y;
-            }
-        }, this);
+        if (CC_JSB) {
+            cc.director.getOpenGLView().setCursorVisible(false);
+            this.mouseCursor = null;
+            var self = this;
+            cc.loader.loadRes("prefabs/Cursor", cc.Prefab, function(err, prefab) {
+                var sprite = cc.instantiate(prefab);
+                self.canvas.node.parent.addChild(sprite);
+                sprite.z = 999;
+                self.mouseCursor = sprite;
+            });
+            this.canvas.node.on(cc.Node.EventType.MOUSE_MOVE, function(evt) {
+                var pos = evt.getLocation();//self.canvas.convertToWorldSpace(evt.getLocation());
+                if (self.mouseCursor != null) {
+                    self.mouseCursor.x = pos.x;
+                    self.mouseCursor.y = pos.y;
+                }
+            }, this);
+            this.canvas.node.on(cc.Node.EventType.MOUSE_ENTER, function(evt) {
+                var pos = evt.getLocation();//self.canvas.convertToWorldSpace(evt.getLocation());
+                if (self.mouseCursor != null) {
+                    self.mouseCursor.enabled = true;
+                }
+            }, this);
+            this.canvas.node.on(cc.Node.EventType.MOUSE_LEAVE, function(evt) {
+                var pos = evt.getLocation();//self.canvas.convertToWorldSpace(evt.getLocation());
+                if (self.mouseCursor != null) {
+                    self.mouseCursor.enabled = false;
+                }
+            }, this);
+        }
+    },
+
+    onDestroy () {
+
     },
 
     start () {

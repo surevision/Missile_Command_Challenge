@@ -44,10 +44,16 @@ cc.Class({
         var self = this;
         cc.log(this.labelStart.font);
         this.labelStart.font.color = (cc.color(255,0,0,255));
-        this.labelStart.node.on(cc.Node.EventType.MOUSE_DOWN, function (event) {
+        // this.labelStart.node.on(cc.Node.EventType.MOUSE_DOWN, function (event) {
+        //     self.onClickStart();
+        // }, this);
+        this.labelStart.node.on(cc.Node.EventType.TOUCH_END, function (event) {
             self.onClickStart();
         }, this);
-        this.labelExit.node.on(cc.Node.EventType.MOUSE_DOWN, function (event) {
+        // this.labelExit.node.on(cc.Node.EventType.MOUSE_DOWN, function (event) {
+        //     self.onClickExit();
+        // }, this);
+        this.labelExit.node.on(cc.Node.EventType.TOUCH_END, function (event) {
             self.onClickExit();
         }, this);
     },
