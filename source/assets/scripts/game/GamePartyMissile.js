@@ -21,7 +21,8 @@ cc.Class({
     },
     flyTo(pos) {
         this.target = pos;
-        var vec2 = cc.v2(pos.x, pos.y);
+        // var vec2 = pos.sub(this.lastPos);
+        var vec2 = cc.pSub(pos, this.lastPos);
         this.angle = vec2.signAngle(cc.Vec2.RIGHT);
         this.speed = this.speed.rotate(this.angle);
     },

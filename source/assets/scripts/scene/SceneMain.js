@@ -174,20 +174,7 @@ cc.Class({
     dealCmds () {
         for (var i = 0; i < this.cmds.length; i += 1) {
             var evt = this.cmds[i];
-            
-            var i = 0;
-            for (i = 0; i < this.partyMissiles.left.length; i += 1) {
-                if (this.partyMissiles.left[i] == null) {
-                    break;
-                }
-            }
-            var missile = new GamePartyMissile(
-                this.drawNode.node.convertToNodeSpace(cc.v2(0, 0))
-            );
-            missile.setDrawNode(this.drawNode);
-            cc.log(evt.getLocation().x, evt.getLocation().y);
-            missile.flyTo(this.drawNode.node.convertToNodeSpaceAR(evt.getLocation()));
-            this.partyMissiles.left[i] = missile;
+            this.launch(evt.getLocation());
             // this.addBoom(evt.getLocation());
         }
         this.cmds = [];
@@ -211,7 +198,31 @@ cc.Class({
      * @param {*位置} pos 
      */
     launch(pos) {
-
+        var i = 0;
+        for (i = 0; i < this.partyMissiles.left.length; i += 1) {
+            if (this.partyMissiles.left[i] == null) {
+                break;
+            }
+        }
+        var loc = this.drawNode.node.convertToNodeSpaceAR(pos);
+        var x = loc.x;
+        var width = this.drawNode.node.width;
+        var index = Math.floor((x + width / 2) / (width / 3));
+        var startPos = [
+            -1,
+            0,
+            1
+        ];
+        var _x = startPos[index] * this.drawNode.node.width / 2;
+        var _y = -this.drawNode.node.height / 2;
+        var _pos = cc.v2(_x, _y);//this.drawNode.node.convertToNodeSpaceAR(cc.v2(_x, _y));
+        var missile = new GamePartyMissile(
+            _pos
+        );
+        missile.setDrawNode(this.drawNode);
+        cc.log(_pos.x, _pos.y, loc.x, loc.y, index);
+        missile.flyTo(loc);
+        this.partyMissiles.left[i] = missile;
     },
 
     judge () {
