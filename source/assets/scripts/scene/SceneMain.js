@@ -81,6 +81,15 @@ cc.Class({
 
     onUpdate (dt) {
         this._super(dt);
+        switch (this.phase) {
+            case Phases.START:
+                this.updateStart();
+                break;
+        }
+    },
+
+    updateStart () {
+        
         if (this.frameCount % 8 <= 4) {
             this.flashRed();
         } else {
@@ -100,7 +109,7 @@ cc.Class({
                 if (missile != null) {
                     missile.update();
                     if (missile.state == GamePartyMissile.States.BOOM) {
-                        var boomPos = this.maskNode.node.convertToNodeSpace(cc.v2(missile.x, missile.y));
+                        var boomPos = cc.v2(missile.x, missile.y);
                         this.addBoom(boomPos);
                         delete this.partyMissiles[partyMissiles][i];
                         this.partyMissiles[partyMissiles][i] = null;
@@ -123,11 +132,11 @@ cc.Class({
             for (var i = 0; i < this.booms.length; i += 1) {
                 var boom = this.booms[i];
                 if (boom != null) {
+                    boom.update();
                     if (boom.isDead()) {
                         delete this.booms[i];
                         this.booms[i] = null;
                     }
-                    boom.update();
                 }
             }
         }
@@ -153,13 +162,15 @@ cc.Class({
         // this.maskNode.type = 0;  // 触发refreshStencil
         var maskDrawNode = this.maskNode.getClippingStencil();
         maskDrawNode.clear();
-
-        // this.canvas.node.on(cc.Node.EventType.MOUSE_DOWN, function(evt) {
-        //     this.cmds[this.cmds.length] = evt;
-        // }, this);
-        this.canvas.node.on(cc.Node.EventType.TOUCH_END, function(evt) {
-            this.cmds[this.cmds.length] = evt;
-        }, this);
+        if (CC_JSB) {
+            this.canvas.node.on(cc.Node.EventType.MOUSE_DOWN, function(evt) {
+                this.cmds[this.cmds.length] = evt;
+            }, this);
+        } else {
+            this.canvas.node.on(cc.Node.EventType.TOUCH_START, function(evt) {
+                this.cmds[this.cmds.length] = evt;
+            }, this);
+        }
     },
 
     refreshUI () {
@@ -188,7 +199,6 @@ cc.Class({
                 break;
             }
         }
-        cc.log(pos.x, pos.y);
         this.booms[i] = new GameBoom(pos);
         this.booms[i].setDrawNode(this.maskNode);
     },
@@ -220,7 +230,6 @@ cc.Class({
             _pos
         );
         missile.setDrawNode(this.drawNode);
-        cc.log(_pos.x, _pos.y, loc.x, loc.y, index);
         missile.flyTo(loc);
         this.partyMissiles.left[i] = missile;
     },
