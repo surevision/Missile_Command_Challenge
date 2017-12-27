@@ -18,6 +18,7 @@ cc.Class({
         this.target = cc.Vec2.ZERO;
         this.state = States.FLY;
         this.drawNode = null;
+        this.flashNode = null;
     },
     flyTo(pos) {
         this.target = pos;
@@ -40,6 +41,11 @@ cc.Class({
                 newPos.y + this.drawNode.node.height / 2
             );
             this.drawNode.stroke();
+            this.flashNode.getClippingStencil().drawDot(
+                this.target, 
+                1, 
+                cc.color(255,255,255,255)
+            );
             this.lastPos = newPos;
             if (cc.pDistance(this.target, newPos) < 3) {
                 this.state = States.BOOM;
@@ -48,5 +54,8 @@ cc.Class({
     },
     setDrawNode(drawNode) {
         this.drawNode = drawNode;
+    },
+    setFlashNode(flashNode) {
+        this.flashNode = flashNode;
     }
 });

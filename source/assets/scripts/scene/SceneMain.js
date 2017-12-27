@@ -116,6 +116,9 @@ cc.Class({
                     if (missile.state == GamePartyMissile.States.BOOM) {
                         var boomPos = cc.v2(missile.x, missile.y);
                         this.addBoom(boomPos);
+                        if (!!missile.missileTargetNode) {
+                            missile.missileTargetNode.removeFromParent();
+                        }
                         // delete this.partyMissiles[partyMissiles][i];
                         // this.partyMissiles[partyMissiles][i] = null;
                     }
@@ -196,6 +199,12 @@ cc.Class({
         this.cmds = [];
     },
 
+    markMissileTarget(node, pos, missile) {
+        node.setPosition(pos);
+        this.drawNode.node.parent.addChild(node);
+        missile.missileTargetNode = node;
+    },
+
     addBoom(pos) {
         var node = this.maskNode.node;
         var i = 0;
@@ -250,6 +259,7 @@ cc.Class({
             _pos
         );
         missile.setDrawNode(this.drawNode);
+        missile.setFlashNode(this.maskNode);
         missile.flyTo(loc);
         var i = 0;
         var key = ["left", "middle", "right"][index];
@@ -259,6 +269,14 @@ cc.Class({
             }
         }
         this.partyMissiles[key][i] = missile;
+        
+        var self = this;
+        cc.loader.loadRes("prefabs/targetNode", cc.Prefab, function(err, prefab) {
+            if (missile.state != GamePartyMissile.States.BOOM) {
+                var node = cc.instantiate(prefab);
+                self.markMissileTarget(node, loc, missile);
+            }
+        });
     },
 
     judge () {
