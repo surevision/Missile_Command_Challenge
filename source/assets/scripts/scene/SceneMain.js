@@ -40,7 +40,10 @@ cc.Class({
         flashNode: {
             type: cc.Graphics,
             default: null
-        }
+        },
+        baseNodes: [cc.Node],
+
+        BaseMissileNum: 10
         
     },
 
@@ -64,6 +67,8 @@ cc.Class({
         this.enemyPlanes = [];
         // 初始化渲染节点
         this.initGraphics();
+        // 
+        // this.initBases();
     },
 
     start () {
@@ -106,13 +111,13 @@ cc.Class({
         for (var partyMissiles in this.partyMissiles) {
             for (var i = 0; i < this.partyMissiles[partyMissiles].length; i += 1) {
                 var missile = this.partyMissiles[partyMissiles][i];
-                if (missile != null) {
+                if (missile != null && missile.state != GamePartyMissile.States.BOOM) {
                     missile.update();
                     if (missile.state == GamePartyMissile.States.BOOM) {
                         var boomPos = cc.v2(missile.x, missile.y);
                         this.addBoom(boomPos);
-                        delete this.partyMissiles[partyMissiles][i];
-                        this.partyMissiles[partyMissiles][i] = null;
+                        // delete this.partyMissiles[partyMissiles][i];
+                        // this.partyMissiles[partyMissiles][i] = null;
                     }
                 }
             }
@@ -185,7 +190,7 @@ cc.Class({
     dealCmds () {
         for (var i = 0; i < this.cmds.length; i += 1) {
             var evt = this.cmds[i];
-            this.launch(evt.getLocation());
+            this.tryLaunch(evt.getLocation());
             // this.addBoom(evt.getLocation());
         }
         this.cmds = [];
@@ -204,20 +209,35 @@ cc.Class({
     },
 
     /**
-     * 发射导弹
+     * 检测临近的基地
      * @param {*位置} pos 
      */
-    launch(pos) {
-        var i = 0;
-        for (i = 0; i < this.partyMissiles.left.length; i += 1) {
-            if (this.partyMissiles.left[i] == null) {
-                break;
-            }
-        }
+    tryLaunch(pos) {
         var loc = this.drawNode.node.convertToNodeSpaceAR(pos);
         var x = loc.x;
         var width = this.drawNode.node.width;
         var index = Math.floor((x + width / 2) / (width / 3));
+        var i = 0;
+        var key = ["left", "middle", "right"][index];
+        for (i = 0; i < this.partyMissiles[key].length; i += 1) {
+            if (this.partyMissiles[key][i] == null) {
+                break;
+            }
+        }
+        // if (i >= this.BaseMissileNum) {
+        //     // 已用完
+        //     // tryNearLaunch();
+        //     return;
+        // }
+        this.launch(index, loc);
+    },
+
+    /**
+     * 指定基地发射
+     * @param {*基地} index 
+     * @param {*目标位置} loc 
+     */
+    launch(index, loc) {
         var startPos = [
             -1,
             0,
@@ -231,7 +251,14 @@ cc.Class({
         );
         missile.setDrawNode(this.drawNode);
         missile.flyTo(loc);
-        this.partyMissiles.left[i] = missile;
+        var i = 0;
+        var key = ["left", "middle", "right"][index];
+        for (i = 0; i < this.partyMissiles[key].length; i += 1) {
+            if (this.partyMissiles[key][i] == null) {
+                break;
+            }
+        }
+        this.partyMissiles[key][i] = missile;
     },
 
     judge () {

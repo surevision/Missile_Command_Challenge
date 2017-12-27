@@ -14,7 +14,7 @@ cc.Class({
         this.y = pos.y;
         this.lastPos = pos;
         this.angle = 0;
-        this.speed = cc.Vec2.RIGHT; // 0 度向右
+        this.speed = cc.Vec2.RIGHT.mul(4); // 0 度向右
         this.target = cc.Vec2.ZERO;
         this.state = States.FLY;
         this.drawNode = null;
@@ -28,8 +28,6 @@ cc.Class({
     },
     update () {
         if (this.state == States.FLY) {
-            // this.drawNode.getClippingStencil().drawDot(cc.v2(this.x, this.y), 1, cc.color(255,255,255,255));
-            
             var newPos = cc.v2(this.x + this.speed.x, this.y + this.speed.y);
             this.x = newPos.x;
             this.y = newPos.y;
@@ -42,7 +40,6 @@ cc.Class({
                 newPos.y + this.drawNode.node.height / 2
             );
             this.drawNode.stroke();
-            // cc.log(this.lastPos.x, this.lastPos.y, newPos.x, newPos.y);
             this.lastPos = newPos;
             if (cc.pDistance(this.target, newPos) < 3) {
                 this.state = States.BOOM;
