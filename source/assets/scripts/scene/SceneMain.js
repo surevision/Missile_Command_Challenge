@@ -3,7 +3,9 @@
 var SceneBase = require("./SceneBase");
 
 var GamePartyMissile = require("../game/GamePartyMissile");
+var GameEnemyMissile = require("../game/GameEnemyMissile");
 var GameBoom = require("../game/GameBoom");
+var GameLevel = require("../game/GameLevel");
 
 var Phases = cc.Enum({
     IDLE: "IDLE",
@@ -11,6 +13,13 @@ var Phases = cc.Enum({
     PAUSE: "PAUSE",
     COMPLETE: "COMPLETE",
     GAMEOVER: "GAMEOVER"
+});
+
+var BaseStatus = cc.Enum({
+    NORMAL: "NORMAL",
+    LOW: "LOW",
+    OUT: "OUT",
+    DESTROY: "DESTROY"
 });
 
 cc.Class({
@@ -41,7 +50,8 @@ cc.Class({
             type: cc.Graphics,
             default: null
         },
-        baseNodes: [cc.Node],
+        baseNodes: [cc.Node],       // 基地
+        buildingNodes: [cc.Node],   // 建筑
 
         BaseMissileNum: 10
         
@@ -57,6 +67,11 @@ cc.Class({
             middle: [],
             right:  []
         };
+        this.partyMissileBaseStatus = {
+            left:   BaseStatus.NORMAL,
+            middle: BaseStatus.NORMAL,
+            right:  BaseStatus.NORMAL
+        };
         // 己方建筑
         this.biuldings = [];
         // 爆炸节点
@@ -67,19 +82,33 @@ cc.Class({
         this.enemyPlanes = [];
         // 初始化渲染节点
         this.initGraphics();
-        // 
-        // this.initBases();
+
+
     },
 
     start () {
         this._super();
-        this.phase = Phases.START;
 
-        this.currWave = 0;  // 波数
+        this.currLevel = 0;  // 波数
         this.currScore = 0; // 当前分数
         this.highScore = 0; // 最高分
 
         this.cmds = []; // 用户指令
+        
+        // 读取关卡
+        this.level = null;
+        this.currWave = 0;  // 当前波数
+        this.currWaveDeadNum = 0;   // 本波消灭的敌人
+        // 暂时按这个方式加载关卡，8波敌人
+        var self = this;
+        cc.loader.loadRes("prefabs/level", function(err, prefab) {
+            var levelNode = cc.instantiate(prefab);
+            var level = levelNode.getComponent(GameLevel);
+            cc.log(level.getWaveCount());
+            var waves = level.getWaves(); // <- get nodes
+            self.level = level;
+            self.phase = Phases.START;
+        });
 
         this.refreshUI();
     },
@@ -105,6 +134,11 @@ cc.Class({
         }
         // 处理用户操作
         this.dealCmds();
+        // 判定并生成本波敌人
+        if (this.currWaveDeadNum == 0) {
+            this.launchEnemy(this.currWave);
+            this.currWave += 1;
+        }
         // 更新物品逻辑
         var isDraw = false;
         // 玩家导弹
@@ -127,8 +161,30 @@ cc.Class({
         }
         // 敌人导弹
         for (var i = 0; i < this.enemyMissiles.length; i += 1) {
-            var enemyMissile = this.enemyMissiles[i];
-            enemyMissile.update();
+            var missile = this.enemyMissiles[i];
+            if (missile != null && missile.state == GameEnemyMissile.States.FLY) {
+                missile.update();
+            } else if (missile != null) {
+                if (missile.state == GameEnemyMissile.States.BOOM) {
+                    var boomPos = cc.v2(missile.x, missile.y);
+                    this.addBoom(boomPos);
+                    // delete this.enemyMissiles[i];
+                    this.enemyMissiles[i] = null;
+                    this.currWaveDeadNum -= 1;
+                } else if (missile.state == GameEnemyMissile.States.DIVIDE) {
+                    // 分裂
+                    var num = Math.floor(Math.random() * 2) + 2;
+                    cc.log("divide",num);
+                    for (var _i = 0; _i < num; _i += 1) {
+                        var pos = cc.v2(missile.x, missile.y);
+                        this.launchEnemyMissile(pos, missile);
+                        this.currWaveDeadNum += 1;
+                    }
+                    // delete this.enemyMissiles[i];
+                    this.enemyMissiles[i] = null;
+                    this.currWaveDeadNum -= 1;
+                }
+            }
         }
         // 敌人飞行器
         for (var i = 0; i < this.enemyPlanes.length; i += 1) {
@@ -136,14 +192,24 @@ cc.Class({
             plane.update();
         }
         // 爆炸范围
-        if (this.frameCount % 4 == 0) { // 帧延迟
-            for (var i = 0; i < this.booms.length; i += 1) {
-                var boom = this.booms[i];
-                if (boom != null) {
-                    boom.update();
-                    if (boom.isDead()) {
-                        delete this.booms[i];
-                        this.booms[i] = null;
+        for (var i = 0; i < this.booms.length; i += 1) {
+            var boom = this.booms[i];
+            if (boom != null) {
+                boom.update();
+                if (boom.isDead()) {
+                    // delete this.booms[i];
+                    this.booms[i] = null;
+                } else {
+                    // 检测周围导弹
+                    for (var i = 0; i < this.enemyMissiles.length; i += 1) {
+                        var missile = this.enemyMissiles[i];
+                        if (missile != null && missile.state == GameEnemyMissile.States.FLY) {
+                            var mPos = cc.v2(missile.x, missile.y);
+                            var bPos = cc.v2(boom.x, boom.y);
+                            if (cc.pDistance(mPos, bPos) < boom.r()) {
+                                missile.state = GameEnemyMissile.States.BOOM;
+                            }
+                        }
                     }
                 }
             }
@@ -171,20 +237,23 @@ cc.Class({
         var maskDrawNode = this.maskNode.getClippingStencil();
         maskDrawNode.clear();
         if (CC_JSB) {
-            this.canvas.node.on(cc.Node.EventType.MOUSE_DOWN, function(evt) {
-                this.cmds[this.cmds.length] = evt;
-            }, this);
+            this.canvas.node.on(cc.Node.EventType.MOUSE_DOWN, this.onTouch, this);
         } else {
-            this.canvas.node.on(cc.Node.EventType.TOUCH_START, function(evt) {
-                this.cmds[this.cmds.length] = evt;
-            }, this);
+            this.canvas.node.on(cc.Node.EventType.TOUCH_START, this.onTouch, this);
         }
     },
 
+    onTouch(evt) {
+        if (this.phase != Phases.START) {
+            return;
+        }
+        this.cmds[this.cmds.length] = evt;
+    },
+
     refreshUI () {
-        this.labelWave.string = cc.js.formatStr("Wave: %d", this.currWave);
-        this.labelScore.string = cc.js.formatStr("Score: %d", this.currWave);
-        this.labelHighScore.string = cc.js.formatStr("Highest : %d", this.currWave);
+        this.labelWave.string = cc.js.formatStr("Level: %d", this.currLevel + 1);
+        this.labelScore.string = cc.js.formatStr("Score: %d", this.currScore);
+        this.labelHighScore.string = cc.js.formatStr("Highest : %d", this.highScore);
         var maskDrawNode = this.maskNode.getClippingStencil();
         maskDrawNode.clear();
         this.drawNode.clear();
@@ -269,7 +338,7 @@ cc.Class({
             }
         }
         this.partyMissiles[key][i] = missile;
-        
+        // 绘制目标精灵
         var self = this;
         cc.loader.loadRes("prefabs/targetNode", cc.Prefab, function(err, prefab) {
             if (missile.state != GamePartyMissile.States.BOOM) {
@@ -277,6 +346,58 @@ cc.Class({
                 self.markMissileTarget(node, loc, missile);
             }
         });
+    },
+
+    /**
+     * 发射敌人导弹
+     * @param {*波数} waveNum
+     */
+    launchEnemy(waveNum) {
+        var wave = this.level.getWave(waveNum);
+        cc.log("wave missilesNum", wave.missilesNum);
+        for (var i = 0; i < wave.missilesNum; i += 1) {
+            var x = Math.floor(Math.random() * this.drawNode.node.width) - this.drawNode.node.width / 2;
+            var y = this.drawNode.node.height / 2;
+            var pos = cc.v2(x, y);
+            this.launchEnemyMissile(pos);
+            this.currWaveDeadNum += 1;
+        }
+    },
+
+    launchEnemyMissile(pos, parent) {
+        //var pos = cc.v2(_x, _y);//this.drawNode.node.convertToNodeSpaceAR(cc.v2(_x, _y));
+        var missile = new GameEnemyMissile(
+            pos,
+            !!parent
+        );
+        if (parent) {
+            // missile.addStartPos(parent.startPos);
+        }
+        // var locs = [
+        //     cc.v2(0, -this.drawNode.node.height / 2),
+        //     cc.v2(-this.drawNode.node.width / 2, -this.drawNode.node.height / 2),
+        //     cc.v2(-this.drawNode.node.width / 2, -this.drawNode.node.height / 2),
+        // ]
+        var locs = [];
+        var sep = 20;
+        for (var _i = 0; _i < sep; _i += 1) {
+            var x = Math.floor(-this.drawNode.node.width / 2 + 
+                this.drawNode.node.width * _i / sep
+            );
+            locs.push(cc.v2(x, -this.drawNode.node.height / 2 + 12));
+        }
+        missile.setPrepareTargets(locs);
+        missile.setDrawNode(this.drawNode);
+        missile.setFlashNode(this.maskNode);
+        missile.fly();
+        var i = 0;
+        for (i = 0; i < this.enemyMissiles.length; i += 1) {
+            if (this.enemyMissiles[i] == null) {
+                break;
+            }
+        }
+        cc.log("i", i);
+        this.enemyMissiles[i] = missile;
     },
 
     judge () {

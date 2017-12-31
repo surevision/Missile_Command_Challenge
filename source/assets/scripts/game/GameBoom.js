@@ -21,9 +21,12 @@ cc.Class({
     setDrawNode(drawNode) {
         this.drawNode = drawNode;
 	},
+	r() {
+		return LIFE - this.life + 1;
+	},
 	drawOnNode() {
 		var center = cc.v2(this.x, this.y);
-		var r = LIFE - this.life + 1;
+		var r = this.r();
 		var color = cc.color(255,255,255,255);
 		this.drawNode.getClippingStencil().drawSolidCircle(
 			center, 
