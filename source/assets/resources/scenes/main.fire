@@ -3855,6 +3855,17 @@
     "canvas": {
       "__id__": 115
     },
+    "audioClips": [
+      {
+        "__uuid__": "9ea270fc-c147-4690-90cb-1a11a4db7d90"
+      },
+      {
+        "__uuid__": "2f0d7057-a700-48b6-a87f-62698bd6588c"
+      },
+      {
+        "__uuid__": "7b0cf1ab-9a27-4953-ad73-cca780a5dad4"
+      }
+    ],
     "labelWave": {
       "__id__": 14
     },

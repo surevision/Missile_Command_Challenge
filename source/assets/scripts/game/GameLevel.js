@@ -21,6 +21,9 @@ cc.Class({
     },
     getWave(index) {
         cc.log("index", index);
+        if (index >= this.getWaveCount()) {
+            return null;
+        }
         return this.getWaves()[index].getComponent(GameWave);
     }
 });

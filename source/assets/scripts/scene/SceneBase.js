@@ -21,13 +21,17 @@ cc.Class({
         canvas: {
             type: cc.Canvas,
             default: null
-        }
+        },
+        audioClips: [cc.AudioClip]
     },
 
     // use this for initialization
     onLoad () {
         cc.log(cc.js.getClassName(this));
         Temp.scene = this;
+        // 音频
+        this.audioPlayed = [];
+        // 鼠标
         if (CC_JSB) {
             cc.director.getOpenGLView().setCursorVisible(false);
             this.mouseCursor = null;
@@ -61,7 +65,12 @@ cc.Class({
     },
 
     onDestroy () {
-
+        for (var i = 0; i < this.audioPlayed; i += 1) {
+            var audioId = this.audioPlayed[i];
+            if (!!audioId) {
+                cc.audioEngine.stop(audioId);
+            }
+        }
     },
 
     start () {
@@ -104,5 +113,14 @@ cc.Class({
 
     unFreeze () {
         this.freezing = false;
-    }
+    },
+    playBGM(clip) {
+        var audioId = cc.audioEngine.play(clip, true, 1);
+        this.audioPlayed.push(audioId);
+    },
+    playSE(clip) {
+        cc.log("playSE", clip);
+        var audioId = cc.audioEngine.play(clip, false, 1);
+        this.audioPlayed.push(audioId);
+    },
 });

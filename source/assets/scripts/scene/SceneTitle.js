@@ -34,6 +34,10 @@ cc.Class({
         spriteSelect: {
             type: cc.Sprite,
             default: null
+        },
+        audio: {
+            url: cc.AudioClip,
+            default: null
         }
     },
 
@@ -68,6 +72,9 @@ cc.Class({
         }
         var self = this;
         this.freeze();
+        this.playSE(this.audioClips[0]);
+        // cc.audioEngine.play(this.audio, true, 1);
+        // this.current = cc.audioEngine.play(this.audio, false, 1)
         this.labelStart.node.runAction(cc.sequence(
             cc.blink(1, 5),
             cc.callFunc(function() {

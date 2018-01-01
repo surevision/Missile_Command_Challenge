@@ -22,6 +22,12 @@ var BaseStatus = cc.Enum({
     DESTROY: "DESTROY"
 });
 
+var AudioMap = cc.Enum({
+    MARK: 0,
+    FLY: 1,
+    BOOM: 2
+});
+
 cc.Class({
     extends: SceneBase,
 
@@ -150,6 +156,7 @@ cc.Class({
                     if (missile.state == GamePartyMissile.States.BOOM) {
                         var boomPos = cc.v2(missile.x, missile.y);
                         this.addBoom(boomPos);
+                        this.playSE(this.audioClips[AudioMap.BOOM]);
                         if (!!missile.missileTargetNode) {
                             missile.missileTargetNode.removeFromParent();
                         }
@@ -168,6 +175,7 @@ cc.Class({
                 if (missile.state == GameEnemyMissile.States.BOOM) {
                     var boomPos = cc.v2(missile.x, missile.y);
                     this.addBoom(boomPos);
+                    this.playSE(this.audioClips[AudioMap.BOOM]);
                     // delete this.enemyMissiles[i];
                     this.enemyMissiles[i] = null;
                     this.currWaveDeadNum -= 1;
@@ -207,7 +215,7 @@ cc.Class({
                             var mPos = cc.v2(missile.x, missile.y);
                             var bPos = cc.v2(boom.x, boom.y);
                             if (cc.pDistance(mPos, bPos) < boom.r()) {
-                                missile.state = GameEnemyMissile.States.BOOM;
+                                missile.boom();
                             }
                         }
                     }
@@ -308,6 +316,7 @@ cc.Class({
         //     return;
         // }
         this.launch(index, loc);
+        this.playSE(this.audioClips[AudioMap.MARK]);
     },
 
     /**
@@ -354,7 +363,9 @@ cc.Class({
      */
     launchEnemy(waveNum) {
         var wave = this.level.getWave(waveNum);
-        cc.log("wave missilesNum", wave.missilesNum);
+        if (!wave) {
+            return;
+        }
         for (var i = 0; i < wave.missilesNum; i += 1) {
             var x = Math.floor(Math.random() * this.drawNode.node.width) - this.drawNode.node.width / 2;
             var y = this.drawNode.node.height / 2;
@@ -390,6 +401,10 @@ cc.Class({
         missile.setDrawNode(this.drawNode);
         missile.setFlashNode(this.maskNode);
         missile.fly();
+        this.canvas.node.runAction(cc.sequence(
+            cc.delayTime(Math.random()*0.24),
+            cc.callFunc(this.playFlySE, this)
+        ))
         var i = 0;
         for (i = 0; i < this.enemyMissiles.length; i += 1) {
             if (this.enemyMissiles[i] == null) {
@@ -398,6 +413,9 @@ cc.Class({
         }
         cc.log("i", i);
         this.enemyMissiles[i] = missile;
+    },
+    playFlySE() {
+        this.playSE(this.audioClips[AudioMap.FLY]);
     },
 
     judge () {

@@ -500,6 +500,11 @@
     "canvas": {
       "__id__": 11
     },
+    "audioClips": [
+      {
+        "__uuid__": "41ebeecc-071f-469e-a824-04541cc22691"
+      }
+    ],
     "labelStart": {
       "__id__": 6
     },

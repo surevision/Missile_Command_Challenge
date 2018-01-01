@@ -22,7 +22,7 @@ cc.Class({
         this.state = States.FLY;
         this.divideDelay = (cannotDivide ? 0 : 1) * 
                             (Math.random() * 5 > 4 ? 0 : 1) * // 分裂几率
-                            Math.floor(40 * Math.random() + 80); // 分裂延迟
+                            Math.floor(40 * Math.random() + 140); // 分裂延迟
         this.drawNode = null;
         this.flashNode = null;
     },
@@ -57,7 +57,7 @@ cc.Class({
             this.drawNode.stroke();
             this.lastPos = newPos;
             if (cc.pDistance(this.target, newPos) < 3) {
-                this.state = States.BOOM;
+                this.boom();
             } else {
                 this.divideDelay -= 1;
                 if (this.divideDelay == 0) {
@@ -65,6 +65,9 @@ cc.Class({
                 }
             }
         }
+    },
+    boom() {
+        this.state = States.BOOM;
     },
     addStartPos(posArr) {
         this.startPos = posArr.concat(this.startPos);
