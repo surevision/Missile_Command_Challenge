@@ -105,6 +105,7 @@ cc.Class({
         this.level = null;
         this.currWave = 0;  // 当前波数
         this.currWaveDeadNum = 0;   // 本波消灭的敌人
+        this.nextWaveDelay = 0;
         // 暂时按这个方式加载关卡，8波敌人
         var self = this;
         cc.loader.loadRes("prefabs/level", function(err, prefab) {
@@ -142,8 +143,12 @@ cc.Class({
         this.dealCmds();
         // 判定并生成本波敌人
         if (this.currWaveDeadNum == 0) {
-            this.launchEnemy(this.currWave);
-            this.currWave += 1;
+            if (this.nextWaveDelay == 0) {
+                this.launchEnemy(this.currWave);
+                this.currWave += 1;
+            } else {
+                this.nextWaveDelay -= 1;
+            }
         }
         // 更新物品逻辑
         var isDraw = false;
@@ -371,6 +376,7 @@ cc.Class({
             var y = this.drawNode.node.height / 2;
             var pos = cc.v2(x, y);
             this.launchEnemyMissile(pos);
+            this.nextWaveDelay = wave.nextWaveDelay;
             this.currWaveDeadNum += 1;
         }
     },
