@@ -11,6 +11,7 @@ var Phases = cc.Enum({
     IDLE: "IDLE",
     START: "START",
     PAUSE: "PAUSE",
+    PRE_END: "PRE_END",
     COMPLETE: "COMPLETE",
     GAMEOVER: "GAMEOVER"
 });
@@ -308,19 +309,31 @@ cc.Class({
         var x = loc.x;
         var width = this.drawNode.node.width;
         var index = Math.floor((x + width / 2) / (width / 3));
-        var i = 0;
-        var key = ["left", "middle", "right"][index];
-        for (i = 0; i < this.partyMissiles[key].length; i += 1) {
-            if (this.partyMissiles[key][i] == null) {
-                break;
+        var keys = ["left", "middle", "right"];
+        var key = keys[index];
+        var prepareNodes = [];
+        for (var i = 0; i < keys.length; i += 1) {
+            if (this.partyMissiles[keys[i]].length != this.BaseMissileNum) {   // 未发射完
+                prepareNodes.push(i);
             }
         }
-        // if (i >= this.BaseMissileNum) {
-        //     // 已用完
-        //     // tryNearLaunch();
-        //     return;
-        // }
-        this.launch(index, loc);
+
+        var pos = prepareNodes.length == 0 ? cc.Vec2.ZERO : this.baseNodes[prepareNodes[0]].getPosition();
+        var nodeIndex = -1;
+        for (var i = 0; i < prepareNodes.length; i += 1) {
+            var index = prepareNodes[i];
+            var node = this.baseNodes[index];
+            if (cc.pDistance(node.getPosition(), loc) <= cc.pDistance(pos, loc)) {
+                pos = node.getPosition();
+                nodeIndex = index;
+            }
+        }
+        if (nodeIndex != -1) {
+            var baseNode = this.baseNodes[nodeIndex].getChildByName("missile_" + (this.partyMissiles[keys[nodeIndex]].length));
+            baseNode.active = false;
+            var startPos = baseNode.parent.convertToWorldSpaceAR(baseNode.getPosition());
+            this.launch(nodeIndex, loc, startPos);
+        }
         this.playSE(this.audioClips[AudioMap.MARK]);
     },
 
@@ -329,15 +342,16 @@ cc.Class({
      * @param {*基地} index 
      * @param {*目标位置} loc 
      */
-    launch(index, loc) {
-        var startPos = [
-            -1,
-            0,
-            1
-        ];
-        var _x = startPos[index] * this.drawNode.node.width / 2;
-        var _y = -this.drawNode.node.height / 2;
-        var _pos = cc.v2(_x, _y);//this.drawNode.node.convertToNodeSpaceAR(cc.v2(_x, _y));
+    launch(index, loc, startPos) {
+        // var startPos = [
+        //     -1,
+        //     0,
+        //     1
+        // ];
+        // var _x = startPos[index] * this.drawNode.node.width / 2;
+        // var _y = -this.drawNode.node.height / 2;
+        
+        var _pos = this.drawNode.node.convertToNodeSpaceAR(startPos);//
         var missile = new GamePartyMissile(
             _pos
         );
@@ -425,6 +439,8 @@ cc.Class({
     },
 
     judge () {
+        if (this.phase == Phases.START) {
 
+        }
     }
 });
