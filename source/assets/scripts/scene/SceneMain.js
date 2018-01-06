@@ -301,7 +301,7 @@ cc.Class({
     },
 
     /**
-     * 检测临近的基地
+     * 检测临近的基地发射
      * @param {*位置} pos 
      */
     tryLaunch(pos) {
@@ -333,8 +333,8 @@ cc.Class({
             baseNode.active = false;
             var startPos = baseNode.parent.convertToWorldSpaceAR(baseNode.getPosition());
             this.launch(nodeIndex, loc, startPos);
+            this.playSE(this.audioClips[AudioMap.MARK]);
         }
-        this.playSE(this.audioClips[AudioMap.MARK]);
     },
 
     /**
