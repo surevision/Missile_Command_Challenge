@@ -62,6 +62,8 @@ cc.Class({
                 }
             }, this);
         }
+        // 键盘
+        cc.systemEvent.on(cc.SystemEvent.EventType.KEY_DOWN, this.onKeyDown, this);
     },
 
     onDestroy () {
@@ -71,6 +73,7 @@ cc.Class({
                 cc.audioEngine.stop(audioId);
             }
         }
+        cc.systemEvent.off(cc.SystemEvent.EventType.KEY_DOWN, this.onKeyDown, this);
     },
 
     start () {
@@ -101,6 +104,10 @@ cc.Class({
 
     onUpdate (dt) {
         // cc.log(dt);
+    },
+
+    onKeyDown (event) {
+
     },
 
     isFreeze () {

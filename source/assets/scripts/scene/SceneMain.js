@@ -45,6 +45,18 @@ cc.Class({
             type: cc.Label,
             default: null
         },
+        menuNode: {
+            type: cc.Node,
+            default: null
+        },
+        labelResume: {
+            type: cc.Label,
+            default: null
+        },
+        labelQuit: {
+            type: cc.Label,
+            default: null
+        },
         maskNode: {
             type: cc.Mask,
             default: null
@@ -89,8 +101,8 @@ cc.Class({
         this.enemyPlanes = [];
         // 初始化渲染节点
         this.initGraphics();
-
-
+        // 初始化标签
+        this.initLabels();
     },
 
     start () {
@@ -257,12 +269,88 @@ cc.Class({
         }
     },
 
+    
+    initLabels() {
+        // this.labelStart.node.on(cc.Node.EventType.MOUSE_DOWN, function (event) {
+        //     self.onClickResume();
+        // }, this);
+        this.labelResume.node.on(cc.Node.EventType.TOUCH_END, function (event) {
+            this.onClickResume();
+        }, this);
+        // this.labelExit.node.on(cc.Node.EventType.MOUSE_DOWN, function (event) {
+        //     self.onClickExit();
+        // }, this);
+        this.labelQuit.node.on(cc.Node.EventType.TOUCH_END, function (event) {
+            this.onClickExit();
+        }, this);
+    },
+
+    onKeyDown: function (event) {
+        switch(event.keyCode) {
+            case cc.KEY.escape:
+                console.log('Press ESC key');
+                this.onESC();
+                break;
+        }
+    },
+
+    onESC() {
+        if (this.phase == Phases.START) {
+            this.pause();
+        } else if (this.phase == Phases.PAUSE) {
+            this.resume();
+        }
+    },
+
+    resume() {
+        this.phase = Phases.START
+        this.unFreeze();
+        this.menuNode.active = false
+    },
+
+    pause() {
+        this.freeze();
+        this.phase = Phases.PAUSE;
+        this.menuNode.active = true;
+    },
+
     onTouch(evt) {
+        if (this.isFreeze()) {
+            return;
+        }
         if (this.phase != Phases.START) {
             return;
         }
         this.cmds[this.cmds.length] = evt;
     },
+    
+
+    onClickResume(evt) {
+        if (this.phase != Phases.PAUSE) {
+            return;
+        }
+        this.resume();
+    },
+    
+
+    onClickExit(evt) {
+        var self = this;
+        this.playSE(this.audioClips[0]);
+        // cc.audioEngine.play(this.audio, true, 1);
+        // this.current = cc.audioEngine.play(this.audio, false, 1)
+        this.labelQuit.node.runAction(cc.sequence(
+            cc.blink(1, 5),
+            cc.callFunc(function() {
+                self.gotoTitleScene();
+            })
+        ));
+    },
+
+    gotoTitleScene() {
+        cc.log("goto title scene");
+        cc.director.loadScene("title")
+    },
+    
 
     refreshUI () {
         this.labelWave.string = cc.js.formatStr("Level: %d", this.currLevel + 1);
