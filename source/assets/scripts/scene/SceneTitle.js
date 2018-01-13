@@ -91,7 +91,7 @@ cc.Class({
         var self = this;
         this.freeze();
         this.labelExit.node.runAction(cc.sequence(
-            cc.blink(0.5, 2),
+            cc.blink(0.25, 2),
             cc.callFunc(function() {
                 self.gotoExit();
             })
