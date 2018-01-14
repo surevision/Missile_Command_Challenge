@@ -23,6 +23,13 @@ var BaseStatus = cc.Enum({
     DESTROY: "DESTROY"
 });
 
+var BaseStatuStrs = cc.Enum({
+    NORMAL: "",
+    LOW: "low",
+    OUT: "out",
+    DESTROY: "destroy"
+});
+
 var AudioMap = cc.Enum({
     MARK: 0,
     FLY: 1,
@@ -45,8 +52,13 @@ cc.Class({
             type: cc.Label,
             default: null
         },
+        labelBaseStatus: [cc.Label],
         menuNode: {
             type: cc.Node,
+            default: null
+        },
+        labelMenuTitle: {
+            type: cc.Label,
             default: null
         },
         labelResume: {
@@ -91,8 +103,6 @@ cc.Class({
             middle: BaseStatus.NORMAL,
             right:  BaseStatus.NORMAL
         };
-        // 己方建筑
-        this.biuldings = [];
         // 爆炸节点
         this.booms = [];
         // 敌人导弹
@@ -108,7 +118,7 @@ cc.Class({
     start () {
         this._super();
 
-        this.currLevel = 0;  // 波数
+        this.currLevel = 0;  // 关卡号
         this.currScore = 0; // 当前分数
         this.highScore = 0; // 最高分
 
@@ -188,7 +198,27 @@ cc.Class({
         for (var i = 0; i < this.enemyMissiles.length; i += 1) {
             var missile = this.enemyMissiles[i];
             if (missile != null && missile.state == GameEnemyMissile.States.FLY) {
-                missile.update();
+                // 碰撞爆炸
+                var collflag = false;
+                var nodes = [].concat(this.buildingNodes).concat(this.baseNodes);
+                for (var _i = 0; _i < nodes.length; _i += 1) {
+                    var node = nodes[_i];
+                    if (node.active) {
+                        var rect = node.getBoundingBoxToWorld();
+                        var pos = this.drawNode.node.convertToWorldSpaceAR(cc.v2(missile.x, missile.y));
+                        if (rect.contains(pos)) {
+                            collflag = true;
+                            break;
+                        }
+                    }
+                }
+                if (collflag) {
+                    // 碰撞爆炸
+                    missile.boom();
+                } else {
+                    missile.update();   // 飞行
+                }
+
             } else if (missile != null) {
                 if (missile.state == GameEnemyMissile.States.BOOM) {
                     var boomPos = cc.v2(missile.x, missile.y);
@@ -237,11 +267,28 @@ cc.Class({
                             }
                         }
                     }
+                    // 检查房子和基地
+                    var nodes = [].concat(this.buildingNodes).concat(this.baseNodes);
+                    for (var _i = 0; _i < nodes.length; _i += 1) {
+                        var node = nodes[_i];
+                        if (node.active) {
+                            var rect = node.getBoundingBoxToWorld();
+                            var polygon = [
+                                cc.v2(rect.xMin, rect.yMin),
+                                cc.v2(rect.xMax, rect.yMin),
+                                cc.v2(rect.xMax, rect.yMax),
+                                cc.v2(rect.xMin, rect.yMax)
+                            ];
+                            var pos = this.drawNode.node.convertToWorldSpaceAR(cc.v2(boom.x, boom.y));
+                            var circle = {position: pos, radius: boom.r()};
+                            if (cc.Intersection.polygonCircle(polygon, circle)) {
+                                node.active = false;
+                            }
+                        }
+                    }
                 }
             }
         }
-
-        // 判定游戏进度
         this.judge();
     },
 
@@ -401,7 +448,8 @@ cc.Class({
         var key = keys[index];
         var prepareNodes = [];
         for (var i = 0; i < keys.length; i += 1) {
-            if (this.partyMissiles[keys[i]].length != this.BaseMissileNum) {   // 未发射完
+            if (this.partyMissiles[keys[i]].length != this.BaseMissileNum && // 未发射完
+                this.baseNodes[i].active) {   // 基地还在
                 prepareNodes.push(i);
             }
         }
@@ -462,6 +510,16 @@ cc.Class({
                 self.markMissileTarget(node, loc, missile);
             }
         });
+        // 绘制基地状态
+        var keyStr = ["Left", "Middle", "Right"][index];
+        if (this.partyMissiles[key].length == Math.floor(this.BaseMissileNum / 2)) {
+            // low
+            this.labelBaseStatus[index].string = BaseStatuStrs.LOW;
+        } else if (this.partyMissiles[key].length == this.BaseMissileNum) {
+            // out
+            this.labelBaseStatus[index].string = BaseStatuStrs.OUT;
+            this.baseNodes[index].active = false;   // 设为隐藏，同时避免敌方导弹击中碰撞爆炸
+        }
     },
 
     /**
@@ -519,7 +577,6 @@ cc.Class({
                 break;
             }
         }
-        cc.log("i", i);
         this.enemyMissiles[i] = missile;
     },
     playFlySE() {
@@ -528,7 +585,40 @@ cc.Class({
 
     judge () {
         if (this.phase == Phases.START) {
-
+            for (var i = 0; i < this.booms.length; i += 1) {
+                // 所有爆炸都结束再判定
+                if (this.booms[i] != null) {
+                    return;
+                }
+            }
+            // 判定敌方导弹用完
+            // 最后一波
+            if (this.currWave > this.level.getWaveCount()) {
+                // 结算剩余建筑
+                var buildingAliveCnt = 0;
+                for (var i = 0; i < this.buildingNodes.length; i += 1) {
+                    if (this.buildingNodes[i].active) {
+                        buildingAliveCnt += 1;
+                    }
+                }
+                if (buildingAliveCnt == 0) {
+                    this.phase = Phases.GAMEOVER;
+                    this.menuNode.active = true;
+                    this.labelMenuTitle.string = "Game Over";
+                    this.labelResume.node.active = false;
+                    this.labelQuit.node.y = this.labelResume.node.y;
+                } else {
+                    this.phase = Phases.COMPLETE;
+                    this.showComplete();
+                }
+                return;
+            }
         }
+    },
+    /**
+     * 关卡完成结算
+     */
+    showComplete() {
+        
     }
 });

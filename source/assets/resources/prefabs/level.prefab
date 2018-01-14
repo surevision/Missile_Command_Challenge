@@ -10,7 +10,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "level",
+    "_name": "GameLevel",
     "_objFlags": 0,
     "_parent": null,
     "_children": [
@@ -18,36 +18,81 @@
         "__id__": 2
       },
       {
-        "__id__": 5
+        "__id__": 13
       },
       {
-        "__id__": 8
-      },
-      {
-        "__id__": 11
-      },
-      {
-        "__id__": 14
-      },
-      {
-        "__id__": 17
-      },
-      {
-        "__id__": 20
-      },
-      {
-        "__id__": 23
+        "__id__": 27
       }
     ],
     "_tag": -1,
     "_active": true,
     "_components": [
       {
-        "__id__": 26
+        "__id__": 41
       }
     ],
     "_prefab": {
-      "__id__": 27
+      "__id__": 42
+    },
+    "_id": "",
+    "_opacity": 255,
+    "_color": {
+      "__type__": "cc.Color",
+      "r": 255,
+      "g": 255,
+      "b": 255,
+      "a": 255
+    },
+    "_cascadeOpacityEnabled": true,
+    "_anchorPoint": {
+      "__type__": "cc.Vec2",
+      "x": 0.5,
+      "y": 0.5
+    },
+    "_contentSize": {
+      "__type__": "cc.Size",
+      "width": 0,
+      "height": 0
+    },
+    "_rotationX": 0,
+    "_rotationY": 0,
+    "_scaleX": 1,
+    "_scaleY": 1,
+    "_position": {
+      "__type__": "cc.Vec2",
+      "x": 0,
+      "y": 0
+    },
+    "_skewX": 0,
+    "_skewY": 0,
+    "_localZOrder": 0,
+    "_globalZOrder": 0,
+    "_opacityModifyRGB": false,
+    "groupIndex": 0
+  },
+  {
+    "__type__": "cc.Node",
+    "_name": "level1",
+    "_objFlags": 0,
+    "_parent": {
+      "__id__": 1
+    },
+    "_children": [
+      {
+        "__id__": 3
+      },
+      {
+        "__id__": 6
+      },
+      {
+        "__id__": 9
+      }
+    ],
+    "_tag": -1,
+    "_active": true,
+    "_components": [],
+    "_prefab": {
+      "__id__": 12
     },
     "_id": "",
     "_opacity": 255,
@@ -90,18 +135,18 @@
     "_name": "GameWave",
     "_objFlags": 0,
     "_parent": {
-      "__id__": 1
+      "__id__": 2
     },
     "_children": [],
     "_tag": -1,
     "_active": true,
     "_components": [
       {
-        "__id__": 3
+        "__id__": 4
       }
     ],
     "_prefab": {
-      "__id__": 4
+      "__id__": 5
     },
     "_id": "",
     "_opacity": 255,
@@ -144,7 +189,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 2
+      "__id__": 3
     },
     "_enabled": true,
     "_missilesNum": 2,
@@ -167,18 +212,18 @@
     "_name": "GameWave",
     "_objFlags": 0,
     "_parent": {
-      "__id__": 1
+      "__id__": 2
     },
     "_children": [],
     "_tag": -1,
     "_active": true,
     "_components": [
       {
-        "__id__": 6
+        "__id__": 7
       }
     ],
     "_prefab": {
-      "__id__": 7
+      "__id__": 8
     },
     "_id": "",
     "_opacity": 255,
@@ -221,7 +266,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 5
+      "__id__": 6
     },
     "_enabled": true,
     "_missilesNum": 3,
@@ -244,18 +289,18 @@
     "_name": "GameWave",
     "_objFlags": 0,
     "_parent": {
-      "__id__": 1
+      "__id__": 2
     },
     "_children": [],
     "_tag": -1,
     "_active": true,
     "_components": [
       {
-        "__id__": 9
+        "__id__": 10
       }
     ],
     "_prefab": {
-      "__id__": 10
+      "__id__": 11
     },
     "_id": "",
     "_opacity": 255,
@@ -298,7 +343,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 8
+      "__id__": 9
     },
     "_enabled": true,
     "_missilesNum": 4,
@@ -317,22 +362,42 @@
     "sync": false
   },
   {
+    "__type__": "cc.PrefabInfo",
+    "root": {
+      "__id__": 1
+    },
+    "asset": {
+      "__uuid__": "efe46587-f023-4c5c-a92b-cdadfd07388c"
+    },
+    "fileId": "a871TAPetFsIGahZMMzrGH",
+    "sync": false
+  },
+  {
     "__type__": "cc.Node",
-    "_name": "GameWave",
+    "_name": "level2",
     "_objFlags": 0,
     "_parent": {
       "__id__": 1
     },
-    "_children": [],
-    "_tag": -1,
-    "_active": true,
-    "_components": [
+    "_children": [
       {
-        "__id__": 12
+        "__id__": 14
+      },
+      {
+        "__id__": 17
+      },
+      {
+        "__id__": 20
+      },
+      {
+        "__id__": 23
       }
     ],
+    "_tag": -1,
+    "_active": true,
+    "_components": [],
     "_prefab": {
-      "__id__": 13
+      "__id__": 26
     },
     "_id": "",
     "_opacity": 255,
@@ -371,34 +436,11 @@
     "groupIndex": 0
   },
   {
-    "__type__": "d04571Js6BLjaDp50MQMsQV",
-    "_name": "",
-    "_objFlags": 0,
-    "node": {
-      "__id__": 11
-    },
-    "_enabled": true,
-    "_missilesNum": 5,
-    "_planeNum": 0,
-    "_nextWaveDelay": 60
-  },
-  {
-    "__type__": "cc.PrefabInfo",
-    "root": {
-      "__id__": 1
-    },
-    "asset": {
-      "__uuid__": "efe46587-f023-4c5c-a92b-cdadfd07388c"
-    },
-    "fileId": "55CurFauRAPYRd6BU7JE2y",
-    "sync": false
-  },
-  {
     "__type__": "cc.Node",
     "_name": "GameWave",
     "_objFlags": 0,
     "_parent": {
-      "__id__": 1
+      "__id__": 13
     },
     "_children": [],
     "_tag": -1,
@@ -455,7 +497,7 @@
       "__id__": 14
     },
     "_enabled": true,
-    "_missilesNum": 6,
+    "_missilesNum": 3,
     "_planeNum": 0,
     "_nextWaveDelay": 60
   },
@@ -467,7 +509,7 @@
     "asset": {
       "__uuid__": "efe46587-f023-4c5c-a92b-cdadfd07388c"
     },
-    "fileId": "ebAlxU/fBErII/0ZElNV1Y",
+    "fileId": "6ewLT1zhtLfb3XsBTr1xIn",
     "sync": false
   },
   {
@@ -475,7 +517,7 @@
     "_name": "GameWave",
     "_objFlags": 0,
     "_parent": {
-      "__id__": 1
+      "__id__": 13
     },
     "_children": [],
     "_tag": -1,
@@ -532,7 +574,7 @@
       "__id__": 17
     },
     "_enabled": true,
-    "_missilesNum": 7,
+    "_missilesNum": 3,
     "_planeNum": 0,
     "_nextWaveDelay": 60
   },
@@ -544,7 +586,7 @@
     "asset": {
       "__uuid__": "efe46587-f023-4c5c-a92b-cdadfd07388c"
     },
-    "fileId": "52OwIKazBIt5RTxIHn05+D",
+    "fileId": "95IC4XhzZAKI1hErzCP44r",
     "sync": false
   },
   {
@@ -552,7 +594,7 @@
     "_name": "GameWave",
     "_objFlags": 0,
     "_parent": {
-      "__id__": 1
+      "__id__": 13
     },
     "_children": [],
     "_tag": -1,
@@ -609,7 +651,7 @@
       "__id__": 20
     },
     "_enabled": true,
-    "_missilesNum": 8,
+    "_missilesNum": 4,
     "_planeNum": 0,
     "_nextWaveDelay": 60
   },
@@ -621,7 +663,7 @@
     "asset": {
       "__uuid__": "efe46587-f023-4c5c-a92b-cdadfd07388c"
     },
-    "fileId": "85FTjfRTBKF5kP5Z/yU++0",
+    "fileId": "e19/BA+NhIoLLlH85gZZf0",
     "sync": false
   },
   {
@@ -629,7 +671,7 @@
     "_name": "GameWave",
     "_objFlags": 0,
     "_parent": {
-      "__id__": 1
+      "__id__": 13
     },
     "_children": [],
     "_tag": -1,
@@ -686,7 +728,7 @@
       "__id__": 23
     },
     "_enabled": true,
-    "_missilesNum": 9,
+    "_missilesNum": 4,
     "_planeNum": 0,
     "_nextWaveDelay": 60
   },
@@ -698,7 +740,400 @@
     "asset": {
       "__uuid__": "efe46587-f023-4c5c-a92b-cdadfd07388c"
     },
-    "fileId": "a7OZ7aXpJBh5ft9ImhZTBt",
+    "fileId": "0adKgm8RJF/KfBeGh57Xe8",
+    "sync": false
+  },
+  {
+    "__type__": "cc.PrefabInfo",
+    "root": {
+      "__id__": 1
+    },
+    "asset": {
+      "__uuid__": "efe46587-f023-4c5c-a92b-cdadfd07388c"
+    },
+    "fileId": "69UmPo87JEJLej9DaNtayk",
+    "sync": false
+  },
+  {
+    "__type__": "cc.Node",
+    "_name": "level3",
+    "_objFlags": 0,
+    "_parent": {
+      "__id__": 1
+    },
+    "_children": [
+      {
+        "__id__": 28
+      },
+      {
+        "__id__": 31
+      },
+      {
+        "__id__": 34
+      },
+      {
+        "__id__": 37
+      }
+    ],
+    "_tag": -1,
+    "_active": true,
+    "_components": [],
+    "_prefab": {
+      "__id__": 40
+    },
+    "_id": "",
+    "_opacity": 255,
+    "_color": {
+      "__type__": "cc.Color",
+      "r": 255,
+      "g": 255,
+      "b": 255,
+      "a": 255
+    },
+    "_cascadeOpacityEnabled": true,
+    "_anchorPoint": {
+      "__type__": "cc.Vec2",
+      "x": 0.5,
+      "y": 0.5
+    },
+    "_contentSize": {
+      "__type__": "cc.Size",
+      "width": 0,
+      "height": 0
+    },
+    "_rotationX": 0,
+    "_rotationY": 0,
+    "_scaleX": 1,
+    "_scaleY": 1,
+    "_position": {
+      "__type__": "cc.Vec2",
+      "x": 0,
+      "y": 0
+    },
+    "_skewX": 0,
+    "_skewY": 0,
+    "_localZOrder": 0,
+    "_globalZOrder": 0,
+    "_opacityModifyRGB": false,
+    "groupIndex": 0
+  },
+  {
+    "__type__": "cc.Node",
+    "_name": "GameWave",
+    "_objFlags": 0,
+    "_parent": {
+      "__id__": 27
+    },
+    "_children": [],
+    "_tag": -1,
+    "_active": true,
+    "_components": [
+      {
+        "__id__": 29
+      }
+    ],
+    "_prefab": {
+      "__id__": 30
+    },
+    "_id": "",
+    "_opacity": 255,
+    "_color": {
+      "__type__": "cc.Color",
+      "r": 255,
+      "g": 255,
+      "b": 255,
+      "a": 255
+    },
+    "_cascadeOpacityEnabled": true,
+    "_anchorPoint": {
+      "__type__": "cc.Vec2",
+      "x": 0.5,
+      "y": 0.5
+    },
+    "_contentSize": {
+      "__type__": "cc.Size",
+      "width": 0,
+      "height": 0
+    },
+    "_rotationX": 0,
+    "_rotationY": 0,
+    "_scaleX": 1,
+    "_scaleY": 1,
+    "_position": {
+      "__type__": "cc.Vec2",
+      "x": 0,
+      "y": 0
+    },
+    "_skewX": 0,
+    "_skewY": 0,
+    "_localZOrder": 0,
+    "_globalZOrder": 0,
+    "_opacityModifyRGB": false,
+    "groupIndex": 0
+  },
+  {
+    "__type__": "d04571Js6BLjaDp50MQMsQV",
+    "_name": "",
+    "_objFlags": 0,
+    "node": {
+      "__id__": 28
+    },
+    "_enabled": true,
+    "_missilesNum": 5,
+    "_planeNum": 0,
+    "_nextWaveDelay": 60
+  },
+  {
+    "__type__": "cc.PrefabInfo",
+    "root": {
+      "__id__": 1
+    },
+    "asset": {
+      "__uuid__": "efe46587-f023-4c5c-a92b-cdadfd07388c"
+    },
+    "fileId": "f8B1FGpspAbYKDAFATEFLG",
+    "sync": false
+  },
+  {
+    "__type__": "cc.Node",
+    "_name": "GameWave",
+    "_objFlags": 0,
+    "_parent": {
+      "__id__": 27
+    },
+    "_children": [],
+    "_tag": -1,
+    "_active": true,
+    "_components": [
+      {
+        "__id__": 32
+      }
+    ],
+    "_prefab": {
+      "__id__": 33
+    },
+    "_id": "",
+    "_opacity": 255,
+    "_color": {
+      "__type__": "cc.Color",
+      "r": 255,
+      "g": 255,
+      "b": 255,
+      "a": 255
+    },
+    "_cascadeOpacityEnabled": true,
+    "_anchorPoint": {
+      "__type__": "cc.Vec2",
+      "x": 0.5,
+      "y": 0.5
+    },
+    "_contentSize": {
+      "__type__": "cc.Size",
+      "width": 0,
+      "height": 0
+    },
+    "_rotationX": 0,
+    "_rotationY": 0,
+    "_scaleX": 1,
+    "_scaleY": 1,
+    "_position": {
+      "__type__": "cc.Vec2",
+      "x": 0,
+      "y": 0
+    },
+    "_skewX": 0,
+    "_skewY": 0,
+    "_localZOrder": 0,
+    "_globalZOrder": 0,
+    "_opacityModifyRGB": false,
+    "groupIndex": 0
+  },
+  {
+    "__type__": "d04571Js6BLjaDp50MQMsQV",
+    "_name": "",
+    "_objFlags": 0,
+    "node": {
+      "__id__": 31
+    },
+    "_enabled": true,
+    "_missilesNum": 5,
+    "_planeNum": 0,
+    "_nextWaveDelay": 60
+  },
+  {
+    "__type__": "cc.PrefabInfo",
+    "root": {
+      "__id__": 1
+    },
+    "asset": {
+      "__uuid__": "efe46587-f023-4c5c-a92b-cdadfd07388c"
+    },
+    "fileId": "944JFcsYVPsJHMgS8LElCN",
+    "sync": false
+  },
+  {
+    "__type__": "cc.Node",
+    "_name": "GameWave",
+    "_objFlags": 0,
+    "_parent": {
+      "__id__": 27
+    },
+    "_children": [],
+    "_tag": -1,
+    "_active": true,
+    "_components": [
+      {
+        "__id__": 35
+      }
+    ],
+    "_prefab": {
+      "__id__": 36
+    },
+    "_id": "",
+    "_opacity": 255,
+    "_color": {
+      "__type__": "cc.Color",
+      "r": 255,
+      "g": 255,
+      "b": 255,
+      "a": 255
+    },
+    "_cascadeOpacityEnabled": true,
+    "_anchorPoint": {
+      "__type__": "cc.Vec2",
+      "x": 0.5,
+      "y": 0.5
+    },
+    "_contentSize": {
+      "__type__": "cc.Size",
+      "width": 0,
+      "height": 0
+    },
+    "_rotationX": 0,
+    "_rotationY": 0,
+    "_scaleX": 1,
+    "_scaleY": 1,
+    "_position": {
+      "__type__": "cc.Vec2",
+      "x": 0,
+      "y": 0
+    },
+    "_skewX": 0,
+    "_skewY": 0,
+    "_localZOrder": 0,
+    "_globalZOrder": 0,
+    "_opacityModifyRGB": false,
+    "groupIndex": 0
+  },
+  {
+    "__type__": "d04571Js6BLjaDp50MQMsQV",
+    "_name": "",
+    "_objFlags": 0,
+    "node": {
+      "__id__": 34
+    },
+    "_enabled": true,
+    "_missilesNum": 6,
+    "_planeNum": 0,
+    "_nextWaveDelay": 60
+  },
+  {
+    "__type__": "cc.PrefabInfo",
+    "root": {
+      "__id__": 1
+    },
+    "asset": {
+      "__uuid__": "efe46587-f023-4c5c-a92b-cdadfd07388c"
+    },
+    "fileId": "6fi68gCIdJN5o4ZWIGcWTx",
+    "sync": false
+  },
+  {
+    "__type__": "cc.Node",
+    "_name": "GameWave",
+    "_objFlags": 0,
+    "_parent": {
+      "__id__": 27
+    },
+    "_children": [],
+    "_tag": -1,
+    "_active": true,
+    "_components": [
+      {
+        "__id__": 38
+      }
+    ],
+    "_prefab": {
+      "__id__": 39
+    },
+    "_id": "",
+    "_opacity": 255,
+    "_color": {
+      "__type__": "cc.Color",
+      "r": 255,
+      "g": 255,
+      "b": 255,
+      "a": 255
+    },
+    "_cascadeOpacityEnabled": true,
+    "_anchorPoint": {
+      "__type__": "cc.Vec2",
+      "x": 0.5,
+      "y": 0.5
+    },
+    "_contentSize": {
+      "__type__": "cc.Size",
+      "width": 0,
+      "height": 0
+    },
+    "_rotationX": 0,
+    "_rotationY": 0,
+    "_scaleX": 1,
+    "_scaleY": 1,
+    "_position": {
+      "__type__": "cc.Vec2",
+      "x": 0,
+      "y": 0
+    },
+    "_skewX": 0,
+    "_skewY": 0,
+    "_localZOrder": 0,
+    "_globalZOrder": 0,
+    "_opacityModifyRGB": false,
+    "groupIndex": 0
+  },
+  {
+    "__type__": "d04571Js6BLjaDp50MQMsQV",
+    "_name": "",
+    "_objFlags": 0,
+    "node": {
+      "__id__": 37
+    },
+    "_enabled": true,
+    "_missilesNum": 6,
+    "_planeNum": 0,
+    "_nextWaveDelay": 60
+  },
+  {
+    "__type__": "cc.PrefabInfo",
+    "root": {
+      "__id__": 1
+    },
+    "asset": {
+      "__uuid__": "efe46587-f023-4c5c-a92b-cdadfd07388c"
+    },
+    "fileId": "f2gdHIz3BB+pydRwhudLA0",
+    "sync": false
+  },
+  {
+    "__type__": "cc.PrefabInfo",
+    "root": {
+      "__id__": 1
+    },
+    "asset": {
+      "__uuid__": "efe46587-f023-4c5c-a92b-cdadfd07388c"
+    },
+    "fileId": "b0FwWsm9tM7qB3+Q2fmpPe",
     "sync": false
   },
   {
@@ -709,7 +1144,19 @@
       "__id__": 1
     },
     "_enabled": true,
-    "_frameDelayCount": 0
+    "_frameDelayCount": 0,
+    "levels": [
+      {
+        "__id__": 2
+      },
+      {
+        "__id__": 13
+      },
+      {
+        "__id__": 27
+      }
+    ],
+    "_currLevel": 0
   },
   {
     "__type__": "cc.PrefabInfo",

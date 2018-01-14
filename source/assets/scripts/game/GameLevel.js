@@ -10,17 +10,26 @@ cc.Class({
             set: function(val) {
                 this._frameDelayCount = val;
             }
-        }
+        },
+        levels: [cc.Node],
+        _currLevel: 0,
+        currLevel: {
+            get: function() {
+                return this._currLevel;
+            },
+            set: function(val) {
+                this._currLevel = val;
+            }
+        },
     },
     getWaves() {
-        var children = this.node.children;
+        var children = this.levels[this.currLevel].children;
         return children;
     },
     getWaveCount() {
-        return this.node.children.length;
+        return this.levels[this.currLevel].children.length;
     },
     getWave(index) {
-        cc.log("index", index);
         if (index >= this.getWaveCount()) {
             return null;
         }

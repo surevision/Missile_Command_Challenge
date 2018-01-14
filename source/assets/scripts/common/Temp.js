@@ -1,8 +1,8 @@
 "use strict";
 
-// 临时策略，保存运行时共享数据
 var Temp = {
-	rid: 0, // 房间号
+	ranks: [], // 存储的排行详情
+	currScore: 0,	// 当前分数
 	scene: null // 场景
 };
 

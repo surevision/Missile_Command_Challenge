@@ -100,8 +100,8 @@ cc.Class({
 
     gotoMainScene () {
         cc.log("goto main scene");
-        // cc.director.loadScene("main");
-        cc.director.loadScene("score");
+        cc.director.loadScene("main");
+        // cc.director.loadScene("score");
     },
 
     gotoExit () {
