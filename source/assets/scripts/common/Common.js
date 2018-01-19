@@ -41,6 +41,14 @@ var Common = {
 		return function() {
 			callback.apply(target, arguments);
 		}
+	},
+	SAVE_KEY: "DATA",
+	saveRank: function(rankList) {
+		cc.sys.localStorage.setItem(Common.SAVE_KEY, JSON.stringify(rankList));
+	},
+	loadRank: function() {
+		var rankList = JSON.parse(cc.sys.localStorage.getItem(Common.SAVE_KEY) || "[]");
+		return rankList;
 	}
 };
 

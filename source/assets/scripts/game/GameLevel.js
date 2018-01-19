@@ -34,5 +34,10 @@ cc.Class({
             return null;
         }
         return this.getWaves()[index].getComponent(GameWave);
+    },
+    hasNextLevel() {
+        
+        return this.currLevel < 1;
+        return this.currLevel < this.levels.length;
     }
 });

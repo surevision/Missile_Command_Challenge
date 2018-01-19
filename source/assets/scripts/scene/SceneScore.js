@@ -1,5 +1,9 @@
 "use strict";
+
+var Common = require("../common/Common");
+var Temp = require("../common/Temp");
 var sprintf = require("../common/Formatter");
+
 var SceneBase = require("./SceneBase");
 
 var BlinkTime = 0.25;
@@ -33,58 +37,22 @@ cc.Class({
     onLoad () {
         this._super();
         
-        // 以下为测试数据
-        var scores = [
-            {
-                name: [
-                    65 + Math.floor(Math.random() * 26),
-                    65 + Math.floor(Math.random() * 26),
-                    65 + Math.floor(Math.random() * 26),
-                    65 + Math.floor(Math.random() * 26)
-                ].reduce((r,a)=>{return r + String.fromCharCode(a);}, ""),
-                score: Math.floor(Math.random() * 999)
-            },
-            {
-                name: [
-                    65 + Math.floor(Math.random() * 26),
-                    65 + Math.floor(Math.random() * 26),
-                    65 + Math.floor(Math.random() * 26),
-                    65 + Math.floor(Math.random() * 26)
-                ].reduce((r,a)=>{return r + String.fromCharCode(a);}, ""),
-                score: Math.floor(Math.random() * 999)
-            },
-            {
-                name: [
-                    65 + Math.floor(Math.random() * 26),
-                    65 + Math.floor(Math.random() * 26),
-                    65 + Math.floor(Math.random() * 26),
-                    65 + Math.floor(Math.random() * 26)
-                ].reduce((r,a)=>{return r + String.fromCharCode(a);}, ""),
-                score: Math.floor(Math.random() * 999)
-            },
-            {
-                name: [
-                    65 + Math.floor(Math.random() * 26),
-                    65 + Math.floor(Math.random() * 26),
-                    65 + Math.floor(Math.random() * 26),
-                    65 + Math.floor(Math.random() * 26)
-                ].reduce((r,a)=>{return r + String.fromCharCode(a);}, ""),
-                score: Math.floor(Math.random() * 999)
-            },
-            {
-                name: [
-                    65 + Math.floor(Math.random() * 26),
-                    65 + Math.floor(Math.random() * 26),
-                    65 + Math.floor(Math.random() * 26),
-                    65 + Math.floor(Math.random() * 26)
-                ].reduce((r,a)=>{return r + String.fromCharCode(a);}, ""),
-                score: Math.floor(Math.random() * 999)
-            },
-        ];
-        this.currScore = 999
-        this.currRank = 1
-        scores[this.currRank - 1].name = "AAAA";
-        scores[this.currRank - 1].score = this.currScore;
+        // 正式数据
+        var scores = Temp.ranks; 
+        this.currScore = Temp.currScore;
+        this.currRank = scores.length;
+        for (var i = 0; i < scores.length; i += 1) {
+            if (scores[i].score <= this.currScore) {
+                this.currRank = i;
+                break;
+            }
+        }
+        cc.log(this.currRank);
+        Temp.ranks.splice(this.currRank, 0, {
+            name: "AAAA",
+            score: this.currScore
+        });
+
 
         // 初始化排名
         for (var i = 0; i < this.rankNumLabels.length; i += 1) {
@@ -123,7 +91,9 @@ cc.Class({
         this.nameChar = this.nameChar % 26;
         this.nameCharArr[this.nameCharLabelIndex] = String.fromCharCode(65 + this.nameChar);
         this.selfNameLabels[this.nameCharLabelIndex].string = this.nameCharArr[this.nameCharLabelIndex];
-        this.rankLabels[this.currRank - 1].string = sprintf("{0}", this.nameCharArr.join(''));
+        if (this.rankLabels[this.currRank]) {
+            this.rankLabels[this.currRank].string = sprintf("{0}", this.nameCharArr.join(''));
+        }
     },
 
     moveToNextChar() {
@@ -134,11 +104,17 @@ cc.Class({
             for(var i = 0; i < this.selfNameLabels.length; i += 1) {
                 this.selfNameLabels[i].node.stopAllActions();
             }
-            this.rankLabels[this.currRank - 1].node.stopAllActions();
-            // this.canvas.node.runAction(cc.sequence(
-            //     cc.delayTime(10),
-            //     cc.callFunc(this.gotoTitleScene, this)
-            // ));
+            if (this.rankLabels[this.currRank]) {
+                this.rankLabels[this.currRank].node.stopAllActions();
+            }
+            this.canvas.node.runAction(cc.sequence(
+                cc.delayTime(3),
+                cc.callFunc(function() {
+                    Temp.ranks[this.currRank].name = sprintf("{0}", this.nameCharArr.join(''));
+                    Common.saveRank(Temp.ranks);
+                    this.gotoTitleScene();
+                }, this)
+            ));
             return;
         }
         this.nameChar = 0;  
@@ -146,7 +122,9 @@ cc.Class({
 
     updateBlink() {
         if (this.isFreeze()) {
-            this.rankLabels[this.currRank - 1].node.opacity = 255;
+            if (this.rankLabels[this.currRank]) {
+                this.rankLabels[this.currRank].node.opacity = 255;
+            }
             for (var i = 0; i < this.selfNameLabels.length; i += 1) {
                 this.selfNameLabels[i].node.opacity = 255;
             }
@@ -156,7 +134,9 @@ cc.Class({
         if (this.frameCount % 15 < 7) {
             opacity = 0;
         }
-        this.rankLabels[this.currRank - 1].node.opacity = opacity;
+        if (this.rankLabels[this.currRank]) {
+            this.rankLabels[this.currRank].node.opacity = opacity;
+        }
         for (var i = 0; i < this.selfNameLabels.length; i += 1) {
             this.selfNameLabels[i].node.opacity = 255;
         }

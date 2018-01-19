@@ -1,5 +1,8 @@
 "use strict";
 
+var Common = require("../common/Common");
+var Temp = require("../common/Temp");
+
 var SceneBase = require("./SceneBase");
 
 var GamePartyMissile = require("../game/GamePartyMissile");
@@ -53,6 +56,10 @@ cc.Class({
             default: null
         },
         labelBaseStatus: [cc.Label],
+        resultNode: {
+            type: cc.Node,
+            default: null
+        },
         menuNode: {
             type: cc.Node,
             default: null
@@ -118,9 +125,10 @@ cc.Class({
     start () {
         this._super();
 
+        Temp.ranks = Common.loadRank();
         this.currLevel = 0;  // 关卡号
         this.currScore = 0; // 当前分数
-        this.highScore = 0; // 最高分
+        this.highScore = Temp.ranks.length > 0 ? Temp.ranks[0].score : 0; // 最高分
 
         this.cmds = []; // 用户指令
         
@@ -398,11 +406,76 @@ cc.Class({
         cc.director.loadScene("title")
     },
     
+    gotoScoreScene() {
+        cc.log("goto score scene");
+        cc.director.loadScene("score")
+    },
+
+    // 清理关卡数据
+    clearForStart() {
+        this.cmds = []; // 用户指令
+        this.currWave = 0;  // 当前波数
+        this.currWaveDeadNum = 0;   // 本波消灭的敌人
+        this.nextWaveDelay = 0;
+        // 玩家导弹
+        for (var partyMissiles in this.partyMissiles) {
+            for (var i = 0; i < this.partyMissiles[partyMissiles].length; i += 1) {
+                var missile = this.partyMissiles[partyMissiles][i];
+                if (missile != null && missile.missileTargetNode != null) {
+                    missile.missileTargetNode.removeFromParent();
+                }
+                this.partyMissiles[partyMissiles][i] = null
+            }
+        }
+        // 敌人导弹
+        for (var i = 0; i < this.enemyMissiles.length; i += 1) {
+            this.enemyMissiles[i] = null;
+        }
+        // 敌人飞行器
+        for (var i = 0; i < this.enemyPlanes.length; i += 1) {
+            this.enemyPlanes[i] = null;
+        }
+        // 爆炸范围
+        for (var i = 0; i < this.booms.length; i += 1) {
+            this.booms[i] = null;
+        }
+        // 己方导弹精灵
+        this.partyMissiles = {
+            left:   [],
+            middle: [],
+            right:  []
+        };
+        this.partyMissileBaseStatus = {
+            left:   BaseStatus.NORMAL,
+            middle: BaseStatus.NORMAL,
+            right:  BaseStatus.NORMAL
+        };
+        // 爆炸节点
+        this.booms = [];
+        // 敌人导弹
+        this.enemyMissiles = [];
+        // 敌人飞行器
+        this.enemyPlanes = [];
+        // 建筑、导弹
+        for (var i = 0; i < this.buildingNodes.length; i += 1) {
+            this.buildingNodes[i].active = true;
+        }
+        for (var i = 0; i < this.baseNodes.length; i += 1) {
+            this.baseNodes[i].active = true;
+            for (var j = 0; j < this.BaseMissileNum; j += 1) {
+                var baseNode = this.baseNodes[i].getChildByName("missile_" + j);
+                baseNode.active = true;
+            }
+        }
+        for (var i = 0; i < this.labelBaseStatus.length; i += 1) {
+            this.labelBaseStatus[i].string = "";
+        }
+    },
 
     refreshUI () {
         this.labelWave.string = cc.js.formatStr("Level: %d", this.currLevel + 1);
         this.labelScore.string = cc.js.formatStr("Score: %d", this.currScore);
-        this.labelHighScore.string = cc.js.formatStr("Highest : %d", this.highScore);
+        this.labelHighScore.string = cc.js.formatStr("High : %d", this.highScore);
         var maskDrawNode = this.maskNode.getClippingStencil();
         maskDrawNode.clear();
         this.drawNode.clear();
@@ -592,25 +665,26 @@ cc.Class({
                 }
             }
             // 判定敌方导弹用完
+            
+            // 结算剩余建筑
+            var buildingAliveCnt = 0;
+            for (var i = 0; i < this.buildingNodes.length; i += 1) {
+                if (this.buildingNodes[i].active) {
+                    buildingAliveCnt += 1;
+                }
+            }
+            if (buildingAliveCnt == 0) {
+                this.phase = Phases.GAMEOVER;
+                this.menuNode.active = true;
+                this.labelMenuTitle.string = "Game Over";
+                this.labelResume.node.active = false;
+                this.labelQuit.node.y = this.labelResume.node.y;
+                return;
+            }
             // 最后一波
             if (this.currWave > this.level.getWaveCount()) {
-                // 结算剩余建筑
-                var buildingAliveCnt = 0;
-                for (var i = 0; i < this.buildingNodes.length; i += 1) {
-                    if (this.buildingNodes[i].active) {
-                        buildingAliveCnt += 1;
-                    }
-                }
-                if (buildingAliveCnt == 0) {
-                    this.phase = Phases.GAMEOVER;
-                    this.menuNode.active = true;
-                    this.labelMenuTitle.string = "Game Over";
-                    this.labelResume.node.active = false;
-                    this.labelQuit.node.y = this.labelResume.node.y;
-                } else {
-                    this.phase = Phases.COMPLETE;
-                    this.showComplete();
-                }
+                this.phase = Phases.COMPLETE;
+                this.showComplete();
                 return;
             }
         }
@@ -619,6 +693,89 @@ cc.Class({
      * 关卡完成结算
      */
     showComplete() {
-        
+        // 计算剩余导弹数
+        var lastMissiles = 0;
+        var keys = ["left", "middle", "right"];
+        for (var i = 0; i < this.baseNodes.length; i += 1) {
+            if (this.baseNodes[i].active) {
+                lastMissiles += this.BaseMissileNum - this.partyMissiles[keys[i]].length;
+            }
+        }
+        // 计算剩余建筑数
+        var buildingAliveCnt = 0;
+        for (var i = 0; i < this.buildingNodes.length; i += 1) {
+            if (this.buildingNodes[i].active) {
+                buildingAliveCnt += 1;
+            }
+        }
+        this.currScore = this.currScore + lastMissiles * 10 + buildingAliveCnt * 50;
+        // 展示
+        var resultNode = this.resultNode;
+        resultNode.getChildByName("buildingsNum").getComponent(cc.Label).string = buildingAliveCnt;
+        resultNode.getChildByName("buildingsScore").getComponent(cc.Label).string = buildingAliveCnt * 50;
+        resultNode.getChildByName("missilesNum").getComponent(cc.Label).string = lastMissiles;
+        resultNode.getChildByName("missilesScore").getComponent(cc.Label).string = lastMissiles * 10;
+        var buildingNodes = [
+            resultNode.getChildByName("buildingSprite"),
+            resultNode.getChildByName("buildingsX"),
+            resultNode.getChildByName("buildingsNum"),
+            resultNode.getChildByName("buildingsE"),
+            resultNode.getChildByName("buildingsScore")
+        ]
+        var missileNodes = [
+            resultNode.getChildByName("missileSprite"),
+            resultNode.getChildByName("missilesX"),
+            resultNode.getChildByName("missilesNum"),
+            resultNode.getChildByName("missilesE"),
+            resultNode.getChildByName("missilesScore")
+        ]
+        // 隐藏
+        var array = [].concat(buildingNodes).concat(missileNodes)
+        for (var i = 0; i < array.length; i += 1) {
+            array[i].opacity = 0;
+        }
+        var delay = 0.5;    // 展示延迟
+        var delayTime = 0;
+        for (var i = 0; i < array.length; i += 1) {
+            delayTime += delay;
+            array[i].runAction(cc.sequence(
+                cc.delayTime(delayTime),
+                cc.callFunc(function() {
+                    cc.log(i);
+                    this.opacity = 255;
+                }, array[i])
+            ));
+        }
+        delayTime += delay;
+        resultNode.active = true;
+        resultNode.runAction(cc.sequence(
+            cc.delayTime(delayTime),
+            cc.callFunc(function() {
+                resultNode.active = false;
+                this.runNextLevel();   // 下一关
+            }, this)
+        ));
+    },
+    show() {
+        cc.log(this);
+        this.active = true;
+    },
+    /**
+     * 进入下一关
+     */
+    runNextLevel() {
+        if (this.highScore < this.currScore) {
+            this.highScore = this.currScore;
+        }
+        this.refreshUI();
+        if (this.level.hasNextLevel()) {
+            this.currLevel += 1;
+            this.level.currLevel = this.currLevel;
+            this.clearForStart();
+            this.phase = Phases.START;
+        } else {
+            Temp.currScore = this.currScore;
+            this.gotoScoreScene();
+        }
     }
 });
