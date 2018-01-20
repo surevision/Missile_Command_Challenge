@@ -10,6 +10,4 @@ Enjoy ~
 
 ## Download
 
-Not available yet.
-
-<div style="display:none;">Executable File [HERE](http://)</div>
+Executable File [HERE](https://www.dropbox.com/s/q0l37r5urhqgtup/MissileCommandRelease.zip?dl=0)
